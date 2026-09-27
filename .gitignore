@@ -1,8 +1,0 @@
-# Keep local WLAN credentials out of Git; the template remains shareable.
-/firmware/ESP32_WMS_Challenge2/secrets.h
-!/firmware/ESP32_WMS_Challenge2/secrets.example.h
-/reference/wiki_corte1/
-*.elf
-*.bin
-*.hex
-.DS_Store
