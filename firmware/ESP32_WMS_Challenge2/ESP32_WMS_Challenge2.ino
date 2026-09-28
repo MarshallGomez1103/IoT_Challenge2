@@ -40,10 +40,8 @@ const float PESO_RIESGO_AMBIENTAL = 0.20f;
 // Anticipación de alarma, pendiente de ajustar al tiempo de respuesta del equipo.
 const float HORIZONTE_ALARMA_MIN = 5.0f;
 const float HORIZONTE_SALIDA_ALARMA_MIN = 7.5f;
-const float UMBRAL_PREVENTIVO = 40.0f;
-const float UMBRAL_CRITICO = 70.0f;
-const float HIST_PREVENTIVO_SALIDA = 35.0f;
-const float HIST_CRITICO_SALIDA = 65.0f;
+const float UMBRAL_ALARMA = 70.0f;
+const float HIST_SALIDA_ALARMA = 65.0f;
 
 // Valores de referencia previos; comprobar su origen, vigencia y pertinencia.
 const float PESO_LUZ = 0.7474f;
@@ -59,8 +57,14 @@ const float PRES_Q75_HPA = 759.8f;
 const int ADC_LUZ_OSCURO = 3500;
 const int ADC_LUZ_CLARA = 600;
 
-const uint32_t INTERVALO_ECHO_MS = 80;
+// Mismo ritmo de medición (250 ms) usado en el código del primer corte.
+const uint32_t INTERVALO_ECHO_MS = 250;
 const uint32_t TIMEOUT_ECHO_MS = 35;
+const uint32_t VIGENCIA_DISTANCIA_MS = 1500;
+const uint8_t VENTANA_DISTANCIA = 5;
+const uint8_t MIN_MUESTRAS_COHERENTES = 3;
+const float TOLERANCIA_MUESTRAS_CM = 2.0f;
+const float SALTO_A_CONFIRMAR_CM = 4.0f;
 const uint32_t INTERVALO_AMBIENTE_MS = 1000;
 const uint32_t INTERVALO_DHT_MS = 2000;
 const uint32_t INTERVALO_REINTENTO_BMP_MS = 3000;
@@ -78,8 +82,16 @@ WebServer server(80);
 enum EstadoAlerta : uint8_t {
   ESTADO_FALLA = 0,
   ESTADO_NORMAL = 1,
-  ESTADO_PREVENTIVO = 2,
-  ESTADO_CRITICO = 3
+  ESTADO_ALARMA = 2
+};
+
+enum EstadoEco : uint8_t {
+  ECO_ESPERANDO = 0,
+  ECO_OK,
+  ECO_SIN_SUBIDA,
+  ECO_SIN_BAJADA,
+  ECO_FUERA_RANGO,
+  ECO_FILTRANDO
 };
 
 // La ISR solo captura tiempos y levanta una bandera; no hace cálculos ni I/O.
@@ -90,6 +102,14 @@ volatile bool echoReady = false;
 volatile bool echoArmed = false;
 
 float distanciaCm = NAN;
+float distanciaCrudaCm = NAN;
+float muestrasDistancia[VENTANA_DISTANCIA];
+float saltoPendienteCm = NAN;
+uint32_t ultimoAnchoEcoUs = 0;
+uint32_t ultimoReporteEcoMs = 0;
+uint8_t muestrasDistanciaCantidad = 0;
+uint8_t muestrasDistanciaSiguiente = 0;
+uint8_t confirmacionesSalto = 0;
 float temperaturaC = NAN;
 float humedadPct = NAN;
 float presionHpa = NAN;
@@ -129,6 +149,7 @@ bool luzInicializada = false;
 bool bmpDisponible = false;
 bool alarmaPorTendencia = false;
 EstadoAlerta estadoActual = ESTADO_FALLA;
+EstadoEco estadoEco = ECO_ESPERANDO;
 
 struct Muestra {
   uint32_t segundos;
@@ -150,8 +171,8 @@ const char PAGINA[] PROGMEM = R"HTML(
 <style>
 :root{color-scheme:dark;--bg:#0b1017;--panel:#121a24;--panel2:#17222e;--line:#263443;--text:#edf4f8;--muted:#9cabb8;--green:#42d3aa;--yellow:#ffc65c;--red:#ff6876;--blue:#7db8ff}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{width:min(100%,760px);margin:0 auto;padding:20px 16px 34px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:11px}.mark{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#173b39;color:var(--green);font-weight:800;letter-spacing:.04em}.brand h1{font-size:1.05rem;line-height:1.2;margin:0}.brand p,.muted{color:var(--muted);font-size:.82rem;margin:3px 0 0}.network{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:.75rem;white-space:nowrap}.network[data-online="true"]{color:var(--green);border-color:#285448}
-h2{font-size:.98rem;margin:22px 0 10px}.risk-card{background:linear-gradient(145deg,#17242d,#111923);border:1px solid var(--line);border-radius:20px;padding:19px}.risk-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.eyebrow,.label{color:var(--muted);font-size:.79rem}.state{font-size:.73rem;font-weight:750;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted)}.state[data-state="NORMAL"]{color:var(--green);border-color:#285448}.state[data-state="PREVENTIVO"]{color:var(--yellow);border-color:#67502b}.state[data-state="CRITICO"],.state[data-state="FALLA"]{color:var(--red);border-color:#67313a}.risk-value{font-size:clamp(2.6rem,14vw,4.3rem);font-weight:760;line-height:1.05;letter-spacing:-.055em;margin:15px 0 4px}.risk-value small{font-size:.42em;letter-spacing:0;color:var(--muted)}.risk-sub{color:var(--muted);font-size:.84rem}.track{height:8px;background:#263342;border-radius:99px;overflow:hidden;margin:15px 0 10px}.bar{height:100%;width:0;background:var(--green);border-radius:inherit;transition:width .35s ease,background .2s}.risk-card[data-state="PREVENTIVO"] .bar{background:var(--yellow)}.risk-card[data-state="CRITICO"] .bar,.risk-card[data-state="FALLA"] .bar{background:var(--red)}.formula{font-size:.75rem;color:var(--muted)}.alert{margin-top:12px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#101821;color:var(--muted);font-size:.85rem}.alert[data-state="PREVENTIVO"]{border-color:#67502b;color:#ffdda0}.alert[data-state="CRITICO"],.alert[data-state="FALLA"]{border-color:#67313a;color:#ffc1c7}
+main{width:min(100%,760px);margin:0 auto;padding:20px 16px 34px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{display:flex;align-items:center;gap:11px}.mark{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#173b39;color:var(--green);font-weight:800;letter-spacing:.04em}.brand h1{font-size:1.05rem;line-height:1.2;margin:0}.brand p,.muted{color:var(--muted);font-size:.82rem;margin:3px 0 0}.network{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:.75rem;white-space:nowrap}.network[data-online="true"]{color:var(--green);border-color:#285448}
+h2{font-size:.98rem;margin:22px 0 10px}.risk-card{background:linear-gradient(145deg,#17242d,#111923);border:1px solid var(--line);border-radius:20px;padding:19px}.risk-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.eyebrow,.label{color:var(--muted);font-size:.79rem}.state{font-size:.73rem;font-weight:750;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted)}.state[data-state="NORMAL"]{color:var(--green);border-color:#285448}.state[data-state="ALARMA"],.state[data-state="FALLA"]{color:var(--red);border-color:#67313a}.risk-value{font-size:clamp(2.6rem,14vw,4.3rem);font-weight:760;line-height:1.05;letter-spacing:-.055em;margin:15px 0 4px}.risk-value small{font-size:.42em;letter-spacing:0;color:var(--muted)}.risk-sub{color:var(--muted);font-size:.84rem}.track{height:8px;background:#263342;border-radius:99px;overflow:hidden;margin:15px 0 10px}.bar{height:100%;width:0;background:var(--green);border-radius:inherit;transition:width .35s ease,background .2s}.risk-card[data-state="ALARMA"] .bar,.risk-card[data-state="FALLA"] .bar{background:var(--red)}.formula{font-size:.75rem;color:var(--muted)}.alert{margin-top:12px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#101821;color:var(--muted);font-size:.85rem}.alert[data-state="ALARMA"],.alert[data-state="FALLA"]{border-color:#67313a;color:#ffc1c7}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.value{font-size:clamp(1.2rem,5.5vw,1.65rem);font-weight:700;letter-spacing:-.025em;margin-top:8px;overflow-wrap:anywhere}.detail{font-size:.73rem;color:var(--muted);margin-top:5px}.sensor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.sensor{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px;min-width:0}.sensor-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.sensor-name{font-weight:650;font-size:.82rem}.pill{font-size:.67rem;line-height:1.25;border-radius:999px;padding:5px 7px;background:#26313c;color:var(--muted);text-align:center}.pill[data-ok="true"]{background:#17362f;color:var(--green)}.pill[data-ok="false"]{background:#3b2929;color:#ffb0b6}.fineprint{font-size:.75rem;color:var(--muted);line-height:1.5;margin:14px 2px 0}button{width:100%;margin-top:13px;border:1px solid #67404a;border-radius:12px;padding:12px;background:#38242a;color:#ffd6da;font:inherit;font-weight:650}button:disabled{opacity:.7}
 @media(min-width:620px){main{padding-top:28px}.grid{gap:12px}.metric{padding:17px}.sensor-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.risk-card{padding:23px}}
 @media(max-width:360px){main{padding-left:11px;padding-right:11px}.grid{gap:8px}.metric{padding:11px}.sensor{padding:10px}.top{align-items:flex-start}.network{font-size:.68rem;padding:6px 8px}}
@@ -162,7 +183,7 @@ h2{font-size:.98rem;margin:22px 0 10px}.risk-card{background:linear-gradient(145
  <div id="risk" class="risk-value">—<small> %</small></div>
  <div id="risk-sub" class="risk-sub">Esperando lecturas válidas de los sensores.</div>
  <div class="track" role="progressbar" aria-label="Riesgo fusionado" aria-valuemin="0" aria-valuemax="100"><div id="risk-bar" class="bar"></div></div>
- <div class="formula">Fusión provisional: 80% nivel + 20% ambiente. La alarma crítica también estima el tiempo hasta el límite.</div>
+ <div class="formula">Fusión provisional: 80% nivel + 20% ambiente. Alarma única: límite de distancia, descenso proyectado o riesgo fusionado desde 70%.</div>
 </section>
 <div id="alert" class="alert" data-state="FALLA" aria-live="polite">Esperando datos del ESP32…</div>
 <h2>Mediciones</h2>
@@ -176,7 +197,7 @@ h2{font-size:.98rem;margin:22px 0 10px}.risk-card{background:linear-gradient(145
 </div>
 <h2>Estado de sensores</h2>
 <div class="sensor-grid">
- <article class="sensor"><div class="sensor-top"><span class="sensor-name">HC-SR04</span><span id="sensor-ultra" class="pill" data-ok="false">Sin lectura</span></div><div class="detail">Distancia y eco</div></article>
+ <article class="sensor"><div class="sensor-top"><span class="sensor-name">HC-SR04</span><span id="sensor-ultra" class="pill" data-ok="false">Sin lectura</span></div><div id="ultra-detail" class="detail">Esperando pulso ECHO</div></article>
  <article class="sensor"><div class="sensor-top"><span class="sensor-name">DHT11</span><span id="sensor-dht" class="pill" data-ok="false">Sin lectura</span></div><div class="detail">Temperatura y humedad</div></article>
  <article class="sensor"><div class="sensor-top"><span class="sensor-name">BMP180</span><span id="sensor-bmp" class="pill" data-ok="false">Sin lectura</span></div><div class="detail">Presión atmosférica</div></article>
  <article class="sensor"><div class="sensor-top"><span class="sensor-name">LDR · ADC</span><span id="sensor-ldr" class="pill" data-ok="false">Sin validar</span></div><div class="detail">Rango calibrado, no presencia física</div></article>
@@ -186,32 +207,38 @@ h2{font-size:.98rem;margin:22px 0 10px}.risk-card{background:linear-gradient(145
 <p id="updated" class="fineprint">Actualizando cada 2 segundos.</p>
 </main><script>
 const byId=id=>document.getElementById(id);let loading=false;
-const stateLabel=s=>({FALLA:'FALLA',NORMAL:'NORMAL',PREVENTIVO:'PREVENTIVO',CRITICO:'CRÍTICO'}[s]||'SIN ESTADO');
+const stateLabel=s=>({FALLA:'FALLA',NORMAL:'NORMAL',ALARMA:'ALARMA'}[s]||'SIN ESTADO');
 function number(v,d=1,suffix=''){return Number.isFinite(v)?v.toFixed(d)+suffix:'—'}
 function setPill(id,ok,good,bad){const e=byId(id);e.textContent=ok?good:bad;e.dataset.ok=ok?'true':'false'}
+const echoText={ESPERANDO:'Esperando eco',OK:'Lectura estable',SIN_SUBIDA:'Sin pulso ECHO',SIN_BAJADA:'ECHO no termina',FUERA_RANGO:'Eco fuera de rango',FILTRANDO:'Estabilizando eco'};
 function updateView(d){const s=d.state||'FALLA',sensors=d.sensors||{};const title=stateLabel(s);byId('state').textContent=title;byId('state').dataset.state=s;byId('risk-card').dataset.state=s;byId('alert').dataset.state=s;byId('network').textContent=d.wifi_ready?'ESP32 en línea':'Wi-Fi sin servidor';byId('network').dataset.online=d.wifi_ready?'true':'false';
- byId('risk').innerHTML=number(d.fusion_pct,0)+'<small> %</small>';byId('risk-sub').textContent=s==='FALLA'?'Fusión no disponible: faltan lecturas válidas.':s==='CRITICO'&&d.trend_alarm?'Alarma anticipada por descenso proyectado del nivel.':s==='CRITICO'?'Riesgo crítico según nivel y ambiente.':s==='PREVENTIVO'?'Riesgo preventivo según la fusión de nivel y ambiente.':'Lecturas válidas; fusión dentro del rango normal.';
+ byId('risk').innerHTML=number(d.fusion_pct,0)+'<small> %</small>';byId('risk-sub').textContent=s==='FALLA'?'Fusión no disponible: falta alguna lectura válida.':s==='ALARMA'&&d.trend_alarm?'Alarma por descenso proyectado del nivel.':s==='ALARMA'?'Alarma por nivel o riesgo fusionado.':'Lecturas válidas; fusión dentro del rango normal.';
  const score=Number.isFinite(d.fusion_pct)?Math.max(0,Math.min(100,d.fusion_pct)):0;byId('risk-bar').style.width=score+'%';byId('risk-bar').parentElement.setAttribute('aria-valuenow',String(Math.round(score)));
- let mensajeCritico=d.silenced?'Alarma crítica silenciada.':'Alarma crítica activa.';if(d.trend_alarm){if(Number.isFinite(d.time_to_critical_min)&&d.time_to_critical_min>0)mensajeCritico='Descenso estimado: '+number(d.falling_rate_cm_min,1,' cm/min')+'; límite en ~'+number(d.time_to_critical_min,1,' min')+'.';else mensajeCritico='Se alcanzó el límite de distancia.';if(d.silenced)mensajeCritico+=' Buzzer silenciado.'}const messages={FALLA:'Fusión no disponible: revise el sensor que falta.',NORMAL:'Estado normal según el único riesgo fusionado.',PREVENTIVO:'Estado preventivo según el único riesgo fusionado.',CRITICO:mensajeCritico};byId('alert').textContent=messages[s]||'Esperando estado del firmware.';
+ let mensajeAlarma=d.silenced?'Alarma silenciada.':'Alarma activa.';if(d.trend_alarm){if(Number.isFinite(d.time_to_limit_min)&&d.time_to_limit_min>0)mensajeAlarma='Descenso estimado: '+number(d.falling_rate_cm_min,1,' cm/min')+'; límite en ~'+number(d.time_to_limit_min,1,' min')+'.';else mensajeAlarma='Se alcanzó el límite de distancia.';if(d.silenced)mensajeAlarma+=' Buzzer silenciado.'}const falla=!sensors.ultrasonic_valid?'Sin distancia: '+(echoText[sensors.ultrasonic_status]||'sin eco válido')+'. Revise HC-SR04.':'Fusión no disponible: revise sensores ambientales.';const messages={FALLA:falla,NORMAL:'Estado normal según el riesgo fusionado.',ALARMA:mensajeAlarma};byId('alert').textContent=messages[s]||'Esperando estado del firmware.';
  byId('level').textContent=number(d.level_cm,1,' cm');byId('ambient').textContent=number(d.ambient_pct,0,'%');byId('temperature').textContent=number(d.temp_c,1,' °C');byId('humidity').textContent=number(d.rh_pct,0,'%');byId('pressure').textContent=number(d.pressure_hpa,1,' hPa');byId('light').textContent=number(d.light_pct,0,'%');
  byId('light-detail').textContent=sensors.ldr_in_calibrated_range?'LDR · valor relativo dentro del rango calibrado':'LDR · sin valor dentro del rango calibrado';
- setPill('sensor-ultra',!!sensors.ultrasonic_valid,'Lectura vigente','Sin eco válido');setPill('sensor-dht',!!sensors.dht_valid,'Lectura válida','Sin lectura válida');setPill('sensor-bmp',!!sensors.bmp_valid,'Lectura válida','Sin lectura válida');setPill('sensor-ldr',!!sensors.ldr_in_calibrated_range,'En rango ADC','Fuera de rango');
- const silence=byId('silence');silence.hidden=s!=='CRITICO';silence.disabled=!!d.silenced;silence.textContent=d.silenced?'Buzzer silenciado':'Silenciar buzzer';byId('updated').textContent='Actualizado: '+new Date().toLocaleTimeString();
+ setPill('sensor-ultra',!!sensors.ultrasonic_valid&&sensors.ultrasonic_status==='OK','Lectura estable',echoText[sensors.ultrasonic_status]||'Sin eco válido');byId('ultra-detail').textContent=Number.isFinite(d.raw_level_cm)?'Eco bruto: '+number(d.raw_level_cm,1,' cm')+' · '+d.echo_us+' µs':'Sin pulso completo';
+ setPill('sensor-dht',!!sensors.dht_valid,'Lectura válida','Sin lectura válida');setPill('sensor-bmp',!!sensors.bmp_valid,'Lectura válida','Sin lectura válida');setPill('sensor-ldr',!!sensors.ldr_in_calibrated_range,'En rango ADC','Fuera de rango');
+ const silence=byId('silence');silence.hidden=s!=='ALARMA';silence.disabled=!!d.silenced;silence.textContent=d.silenced?'Buzzer silenciado':'Silenciar buzzer';byId('updated').textContent='Actualizado: '+new Date().toLocaleTimeString();
 }
-async function refresh(){if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),2500);try{const response=await fetch('/api/status',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error('HTTP');updateView(await response.json())}catch(e){byId('network').textContent='ESP32 sin respuesta';byId('network').dataset.online='false';byId('state').textContent='SIN RESPUESTA';byId('state').dataset.state='FALLA';byId('risk-card').dataset.state='FALLA';byId('risk').innerHTML='—<small> %</small>';byId('risk-sub').textContent='Sin datos actuales del ESP32.';byId('risk-bar').style.width='0%';['level','ambient','temperature','humidity','pressure','light'].forEach(id=>byId(id).textContent='—');setPill('sensor-ultra',false,'Lectura vigente','Sin respuesta');setPill('sensor-dht',false,'Lectura válida','Sin respuesta');setPill('sensor-bmp',false,'Lectura válida','Sin respuesta');setPill('sensor-ldr',false,'En rango ADC','Sin respuesta');byId('silence').hidden=true;byId('alert').dataset.state='FALLA';byId('alert').textContent='No se pudo consultar el ESP32. Comprueba que sigues conectado a su Wi-Fi.'}finally{clearTimeout(timeout);loading=false}}
+async function refresh(){if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),2500);try{const response=await fetch('/api/status',{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error('HTTP');updateView(await response.json())}catch(e){byId('network').textContent='ESP32 sin respuesta';byId('network').dataset.online='false';byId('state').textContent='SIN RESPUESTA';byId('state').dataset.state='FALLA';byId('risk-card').dataset.state='FALLA';byId('risk').innerHTML='—<small> %</small>';byId('risk-sub').textContent='Sin datos actuales del ESP32.';byId('risk-bar').style.width='0%';['level','ambient','temperature','humidity','pressure','light'].forEach(id=>byId(id).textContent='—');setPill('sensor-ultra',false,'Lectura estable','Sin respuesta');byId('ultra-detail').textContent='ESP32 sin respuesta';setPill('sensor-dht',false,'Lectura válida','Sin respuesta');setPill('sensor-bmp',false,'Lectura válida','Sin respuesta');setPill('sensor-ldr',false,'En rango ADC','Sin respuesta');byId('silence').hidden=true;byId('alert').dataset.state='FALLA';byId('alert').textContent='No se pudo consultar el ESP32. Comprueba que sigues conectado a su Wi-Fi.'}finally{clearTimeout(timeout);loading=false}}
 byId('silence').onclick=async()=>{try{await fetch('/api/silence',{method:'POST'});refresh()}catch(e){byId('alert').textContent='No se pudo enviar el comando al ESP32.'}};refresh();setInterval(refresh,2000);
 </script></body></html>
 )HTML";
 
 void IRAM_ATTR capturarEcoISR() {
-  if (!echoArmed) return;
+  if (!echoArmed || echoReady) return;
   uint32_t ahoraUs = micros();
   if (digitalRead(PIN_ECHO) == HIGH) {
-    echoRiseUs = ahoraUs;
-    echoRiseSeen = true;
+    if (!echoRiseSeen) {
+      echoRiseUs = ahoraUs;
+      echoRiseSeen = true;
+    }
   } else if (echoRiseSeen) {
     echoWidthUs = ahoraUs - echoRiseUs;
     echoRiseSeen = false;
+    // El código anterior seguía capturando flancos y podía sobrescribir el pulso.
+    echoArmed = false;
     echoReady = true;
   }
 }
@@ -293,14 +320,14 @@ float calcularVelocidadDescensoCmMin(uint32_t ahoraMs) {
 
 void cambiarEstado(EstadoAlerta nuevo) {
   if (nuevo == estadoActual) return;
-  if (nuevo == ESTADO_NORMAL) alarmaSilenciada = false;
-  else if (nuevo == ESTADO_PREVENTIVO || nuevo == ESTADO_CRITICO) alarmaSilenciada = false;
+  if (nuevo == ESTADO_NORMAL || nuevo == ESTADO_ALARMA) alarmaSilenciada = false;
   estadoActual = nuevo;
 }
 
 void actualizarFusion() {
   uint32_t ahoraMs = millis();
-  bool nivelValido = distanciaValida && (ahoraMs - ultimoEcoMs <= 500);
+  bool nivelValido = distanciaValida &&
+                     (ahoraMs - ultimoEcoMs <= VIGENCIA_DISTANCIA_MS);
   velocidadDescensoCmMin = calcularVelocidadDescensoCmMin(ahoraMs);
   tiempoAlLimiteMin = NAN;
   alarmaPorTendencia = false;
@@ -326,7 +353,7 @@ void actualizarFusion() {
   }
 
   bool ambienteValido = dhtValido && bmpValido && isfinite(indiceAmbientalPct);
-  float horizonteActivoMin = estadoActual == ESTADO_CRITICO
+  float horizonteActivoMin = estadoActual == ESTADO_ALARMA
                                  ? HORIZONTE_SALIDA_ALARMA_MIN
                                  : HORIZONTE_ALARMA_MIN;
   alarmaPorTendencia = isfinite(tiempoAlLimiteMin) && tiempoAlLimiteMin <= horizonteActivoMin;
@@ -336,7 +363,7 @@ void actualizarFusion() {
   if (!ambienteValido) {
     riesgoFusionPct = NAN;
     if (distanciaCm >= DISTANCIA_NIVEL_CRITICO_CM || alarmaPorTendencia)
-      cambiarEstado(ESTADO_CRITICO);
+      cambiarEstado(ESTADO_ALARMA);
     else
       cambiarEstado(ESTADO_FALLA);
     return;
@@ -345,24 +372,95 @@ void actualizarFusion() {
   riesgoFusionPct = PESO_RIESGO_NIVEL * riesgoNivelPct +
                     PESO_RIESGO_AMBIENTAL * indiceAmbientalPct;
 
-  EstadoAlerta siguiente = estadoActual;
-  if (distanciaCm >= DISTANCIA_NIVEL_CRITICO_CM || alarmaPorTendencia) {
-    siguiente = ESTADO_CRITICO;
-  } else if (estadoActual == ESTADO_CRITICO) {
-    if (riesgoFusionPct < HIST_CRITICO_SALIDA)
-      siguiente = riesgoFusionPct < HIST_PREVENTIVO_SALIDA ? ESTADO_NORMAL : ESTADO_PREVENTIVO;
-  } else if (estadoActual == ESTADO_PREVENTIVO) {
-    if (riesgoFusionPct >= UMBRAL_CRITICO) siguiente = ESTADO_CRITICO;
-    else if (riesgoFusionPct < HIST_PREVENTIVO_SALIDA) siguiente = ESTADO_NORMAL;
-  } else {
-    if (riesgoFusionPct >= UMBRAL_CRITICO) siguiente = ESTADO_CRITICO;
-    else if (riesgoFusionPct >= UMBRAL_PREVENTIVO) siguiente = ESTADO_PREVENTIVO;
-    else siguiente = ESTADO_NORMAL;
+  // Una sola alarma: el nivel, la proyección o la fusión pueden activarla.
+  // El umbral inferior evita que el buzzer oscile cerca de 70%.
+  float umbralFusion = estadoActual == ESTADO_ALARMA
+                           ? HIST_SALIDA_ALARMA : UMBRAL_ALARMA;
+  bool activarAlarma = distanciaCm >= DISTANCIA_NIVEL_CRITICO_CM ||
+                       alarmaPorTendencia || riesgoFusionPct >= umbralFusion;
+  cambiarEstado(activarAlarma ? ESTADO_ALARMA : ESTADO_NORMAL);
+}
+
+const char *nombreEstadoEco(EstadoEco e) {
+  switch (e) {
+    case ECO_OK: return "OK";
+    case ECO_SIN_SUBIDA: return "SIN_SUBIDA";
+    case ECO_SIN_BAJADA: return "SIN_BAJADA";
+    case ECO_FUERA_RANGO: return "FUERA_RANGO";
+    case ECO_FILTRANDO: return "FILTRANDO";
+    default: return "ESPERANDO";
   }
-  cambiarEstado(siguiente);
+}
+
+void actualizarEstadoEco(EstadoEco nuevo) {
+  if (nuevo == estadoEco) return;
+  estadoEco = nuevo;
+  Serial.print("HC-SR04: ");
+  Serial.println(nombreEstadoEco(nuevo));
+}
+
+void agregarDistanciaCruda(float cm, uint32_t ahoraMs) {
+  muestrasDistancia[muestrasDistanciaSiguiente] = cm;
+  muestrasDistanciaSiguiente = (muestrasDistanciaSiguiente + 1) % VENTANA_DISTANCIA;
+  if (muestrasDistanciaCantidad < VENTANA_DISTANCIA) ++muestrasDistanciaCantidad;
+  if (muestrasDistanciaCantidad < MIN_MUESTRAS_COHERENTES) {
+    actualizarEstadoEco(ECO_FILTRANDO);
+    return;
+  }
+
+  // La mediana elimina pulsos aislados; tres ecos cercanos evitan validar ruido.
+  float ordenadas[VENTANA_DISTANCIA];
+  for (uint8_t i = 0; i < muestrasDistanciaCantidad; ++i)
+    ordenadas[i] = muestrasDistancia[i];
+  for (uint8_t i = 1; i < muestrasDistanciaCantidad; ++i) {
+    float valor = ordenadas[i];
+    uint8_t j = i;
+    while (j > 0 && ordenadas[j - 1] > valor) {
+      ordenadas[j] = ordenadas[j - 1];
+      --j;
+    }
+    ordenadas[j] = valor;
+  }
+  float mediana = ordenadas[muestrasDistanciaCantidad / 2];
+  uint8_t cercanas = 0;
+  for (uint8_t i = 0; i < muestrasDistanciaCantidad; ++i)
+    if (fabsf(muestrasDistancia[i] - mediana) <= TOLERANCIA_MUESTRAS_CM) ++cercanas;
+  if (cercanas < MIN_MUESTRAS_COHERENTES) {
+    actualizarEstadoEco(ECO_FILTRANDO);
+    return;
+  }
+
+  // Un cambio brusco requiere tres ventanas consecutivas que lo confirmen.
+  if (distanciaValida && fabsf(mediana - distanciaCm) > SALTO_A_CONFIRMAR_CM) {
+    if (!isfinite(saltoPendienteCm) ||
+        fabsf(mediana - saltoPendienteCm) > TOLERANCIA_MUESTRAS_CM) {
+      saltoPendienteCm = mediana;
+      confirmacionesSalto = 1;
+    } else if (confirmacionesSalto < 3) {
+      ++confirmacionesSalto;
+    }
+    if (confirmacionesSalto < 3) {
+      actualizarEstadoEco(ECO_FILTRANDO);
+      return;
+    }
+  }
+  saltoPendienteCm = NAN;
+  confirmacionesSalto = 0;
+  distanciaCm = mediana;
+  distanciaValida = true;
+  ultimoEcoMs = ahoraMs;
+  actualizarEstadoEco(ECO_OK);
 }
 
 void iniciarMedicionEcho(uint32_t ahoraMs) {
+  // No disparar sobre un ECHO que quedó alto después de la medida anterior.
+  if (digitalRead(PIN_ECHO) == HIGH) {
+    ultimoDisparoEcoMs = ahoraMs;
+    ultimoAnchoEcoUs = 0;
+    distanciaCrudaCm = NAN;
+    actualizarEstadoEco(ECO_SIN_BAJADA);
+    return;
+  }
   noInterrupts();
   echoRiseSeen = false;
   echoReady = false;
@@ -380,9 +478,11 @@ void iniciarMedicionEcho(uint32_t ahoraMs) {
 
 void procesarEcho(uint32_t ahoraMs) {
   bool lista;
+  bool subidaVista;
   uint32_t anchoUs;
   noInterrupts();
   lista = echoReady;
+  subidaVista = echoRiseSeen;
   anchoUs = echoWidthUs;
   if (lista) {
     echoReady = false;
@@ -392,13 +492,12 @@ void procesarEcho(uint32_t ahoraMs) {
 
   if (lista) {
     esperandoEco = false;
-    ultimoEcoMs = ahoraMs;
+    ultimoAnchoEcoUs = anchoUs;
+    distanciaCrudaCm = anchoUs * 0.0343f / 2.0f;
     if (anchoUs >= 116 && anchoUs <= 23500) {
-      distanciaCm = anchoUs * 0.0343f / 2.0f;
-      distanciaValida = true;
+      agregarDistanciaCruda(distanciaCrudaCm, ahoraMs);
     } else {
-      distanciaCm = NAN;
-      distanciaValida = false;
+      actualizarEstadoEco(ECO_FUERA_RANGO);
     }
   } else if (esperandoEco && ahoraMs - inicioEsperaEcoMs >= TIMEOUT_ECHO_MS) {
     noInterrupts();
@@ -406,10 +505,33 @@ void procesarEcho(uint32_t ahoraMs) {
     echoRiseSeen = false;
     interrupts();
     esperandoEco = false;
-    ultimoEcoMs = ahoraMs;
+    ultimoAnchoEcoUs = 0;
+    distanciaCrudaCm = NAN;
+    actualizarEstadoEco(subidaVista ? ECO_SIN_BAJADA : ECO_SIN_SUBIDA);
+  }
+
+  // Una lectura anterior no puede mantenerse indefinidamente si se desconecta.
+  if (distanciaValida && ahoraMs - ultimoEcoMs > VIGENCIA_DISTANCIA_MS) {
     distanciaCm = NAN;
     distanciaValida = false;
+    muestrasDistanciaCantidad = 0;
+    muestrasDistanciaSiguiente = 0;
+    saltoPendienteCm = NAN;
+    confirmacionesSalto = 0;
   }
+}
+
+void reportarEcoSerie(uint32_t ahoraMs) {
+  if (ahoraMs - ultimoReporteEcoMs < 2000) return;
+  ultimoReporteEcoMs = ahoraMs;
+  Serial.print("HC-SR04 pulso=");
+  Serial.print(ultimoAnchoEcoUs);
+  Serial.print(" us, bruto=");
+  Serial.print(distanciaCrudaCm, 1);
+  Serial.print(" cm, estable=");
+  Serial.print(distanciaCm, 1);
+  Serial.print(" cm, estado=");
+  Serial.println(nombreEstadoEco(estadoEco));
 }
 
 void leerSensoresAmbientales(uint32_t ahoraMs) {
@@ -462,8 +584,7 @@ void leerSensoresAmbientales(uint32_t ahoraMs) {
 const char *nombreEstado(EstadoAlerta e) {
   switch (e) {
     case ESTADO_NORMAL: return "NORMAL";
-    case ESTADO_PREVENTIVO: return "PREVENTIVO";
-    case ESTADO_CRITICO: return "CRITICO";
+    case ESTADO_ALARMA: return "ALARMA";
     default: return "FALLA";
   }
 }
@@ -475,10 +596,12 @@ void agregarFloatJson(String &json, float valor, unsigned int decimales) {
 
 String crearEstadoJson() {
   String json;
-  json.reserve(480);
+  json.reserve(560);
   json = "{\"state\":\"";
   json += nombreEstado(estadoActual);
   json += "\",\"level_cm\":"; agregarFloatJson(json, distanciaCm, 1);
+  json += ",\"raw_level_cm\":"; agregarFloatJson(json, distanciaCrudaCm, 1);
+  json += ",\"echo_us\":"; json += String(ultimoAnchoEcoUs);
   json += ",\"temp_c\":"; agregarFloatJson(json, temperaturaC, 1);
   json += ",\"rh_pct\":"; agregarFloatJson(json, humedadPct, 1);
   json += ",\"pressure_hpa\":"; agregarFloatJson(json, presionHpa, 1);
@@ -486,10 +609,11 @@ String crearEstadoJson() {
   json += ",\"ambient_pct\":"; agregarFloatJson(json, indiceAmbientalPct, 1);
   json += ",\"fusion_pct\":"; agregarFloatJson(json, riesgoFusionPct, 1);
   json += ",\"falling_rate_cm_min\":"; agregarFloatJson(json, velocidadDescensoCmMin, 2);
-  json += ",\"time_to_critical_min\":"; agregarFloatJson(json, tiempoAlLimiteMin, 2);
+  json += ",\"time_to_limit_min\":"; agregarFloatJson(json, tiempoAlLimiteMin, 2);
   json += ",\"trend_alarm\":"; json += alarmaPorTendencia ? "true" : "false";
   json += ",\"sensors\":{";
   json += "\"ultrasonic_valid\":"; json += distanciaValida ? "true" : "false";
+  json += ",\"ultrasonic_status\":\""; json += nombreEstadoEco(estadoEco); json += "\"";
   json += ",\"dht_valid\":"; json += dhtValido ? "true" : "false";
   json += ",\"bmp_valid\":"; json += bmpValido ? "true" : "false";
   json += ",\"ldr_in_calibrated_range\":"; json += ldrEnRangoCalibrado ? "true" : "false";
@@ -656,14 +780,13 @@ void actualizarActuadores(uint32_t ahoraMs) {
   // RGB de ánodo común: PWM invertido, conservando el montaje previo.
   uint8_t r = 0, g = 0, b = 0;
   if (estadoActual == ESTADO_NORMAL) g = 170;
-  else if (estadoActual == ESTADO_PREVENTIVO) { r = 255; g = 105; }
-  else if (estadoActual == ESTADO_CRITICO) r = faseRoja ? 255 : 30;
+  else if (estadoActual == ESTADO_ALARMA) r = faseRoja ? 255 : 30;
   else { r = 180; g = 45; } // Falla: ámbar, sin ocultar el error como estado normal.
   analogWrite(PIN_RGB_R, 255 - r);
   analogWrite(PIN_RGB_G, 255 - g);
   analogWrite(PIN_RGB_B, 255 - b);
 
-  bool sonar = estadoActual == ESTADO_CRITICO && !alarmaSilenciada && faseBuzzer;
+  bool sonar = estadoActual == ESTADO_ALARMA && !alarmaSilenciada && faseBuzzer;
   digitalWrite(PIN_BUZZER, sonar ? LOW : HIGH);
 }
 
@@ -703,6 +826,7 @@ void loop() {
   // Superloop: atiende red, sensores, fusión, actuadores y pantalla sin hilos.
   atenderWifiYServidor(ahoraMs);
   procesarEcho(ahoraMs);
+  reportarEcoSerie(ahoraMs);
   if (!esperandoEco && ahoraMs - ultimoDisparoEcoMs >= INTERVALO_ECHO_MS)
     iniciarMedicionEcho(ahoraMs);
   leerSensoresAmbientales(ahoraMs);
