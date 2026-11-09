@@ -1,0 +1,125 @@
+fecha,embalse,capacidad_util_Mm3,volumen_Mm3,almacenamiento_pct,descarga_m3_s,capacidad_regulacion_Mm3,tendencia_publicada,fuente_url
+2024-08-01,El Hato,12.7,10.523,82.86,0.20,2.18,ASCENDENTE,https://car1.car.gov.co/uploads/files/66abce5249a07.pdf
+2024-08-01,Neusa,102.3,80.421,78.61,1.00,21.88,DESCENDENTE,https://car1.car.gov.co/uploads/files/66abce5249a07.pdf
+2024-08-01,Sisga,90.1,63.134,70.06,0.00,26.99,ASCENDENTE,https://car1.car.gov.co/uploads/files/66abce5249a07.pdf
+2024-08-01,Tominé,689.5,366.657,53.18,0.00,322.87,ASCENDENTE,https://car1.car.gov.co/uploads/files/66abce5249a07.pdf
+2024-08-02,El Hato,12.7,10.523,82.86,0.20,2.18,ESTABLE,https://car1.car.gov.co/uploads/files/66ad147187195.pdf
+2024-08-02,Neusa,102.3,80.421,78.61,1.00,21.88,ESTABLE,https://car1.car.gov.co/uploads/files/66ad147187195.pdf
+2024-08-02,Sisga,90.1,63.508,70.47,0.00,26.61,ASCENDENTE,https://car1.car.gov.co/uploads/files/66ad147187195.pdf
+2024-08-02,Tominé,689.5,367.222,53.26,3.00,322.31,ASCENDENTE,https://car1.car.gov.co/uploads/files/66ad147187195.pdf
+2024-08-03,El Hato,12.7,10.505,82.72,0.20,2.19,DESCENDENTE,https://car1.car.gov.co/uploads/files/66aea2bfae41d.pdf
+2024-08-03,Neusa,102.3,80.333,78.53,1.00,21.97,DESCENDENTE,https://car1.car.gov.co/uploads/files/66aea2bfae41d.pdf
+2024-08-03,Sisga,90.1,63.722,70.71,0.00,26.40,ASCENDENTE,https://car1.car.gov.co/uploads/files/66aea2bfae41d.pdf
+2024-08-03,Tominé,689.5,367.222,53.26,3.00,322.31,ESTABLE,https://car1.car.gov.co/uploads/files/66aea2bfae41d.pdf
+2024-08-04,El Hato,12.7,10.496,82.65,0.20,2.20,DESCENDENTE,https://car1.car.gov.co/uploads/files/66afca1e14a0e.pdf
+2024-08-04,Neusa,102.3,80.245,78.44,1.00,22.05,DESCENDENTE,https://car1.car.gov.co/uploads/files/66afca1e14a0e.pdf
+2024-08-04,Sisga,90.1,63.883,70.89,1.00,26.24,ASCENDENTE,https://car1.car.gov.co/uploads/files/66afca1e14a0e.pdf
+2024-08-04,Tominé,689.5,366.939,53.22,5.00,322.59,DESCENDENTE,https://car1.car.gov.co/uploads/files/66afca1e14a0e.pdf
+2024-08-05,El Hato,12.7,10.496,82.65,0.20,2.20,ESTABLE,https://car1.car.gov.co/uploads/files/66b10f6f028b1.pdf
+2024-08-05,Neusa,102.3,80.245,78.44,1.00,22.05,ESTABLE,https://car1.car.gov.co/uploads/files/66b10f6f028b1.pdf
+2024-08-05,Sisga,90.1,64.044,71.07,1.00,26.08,ASCENDENTE,https://car1.car.gov.co/uploads/files/66b10f6f028b1.pdf
+2024-08-05,Tominé,689.5,366.939,53.22,5.00,322.59,ESTABLE,https://car1.car.gov.co/uploads/files/66b10f6f028b1.pdf
+2024-08-06,El Hato,12.7,10.487,82.58,0.20,2.21,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b2580ec4e40.pdf
+2024-08-06,Neusa,102.3,80.157,78.36,1.00,22.14,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b2580ec4e40.pdf
+2024-08-06,Sisga,90.1,64.098,71.12,1.00,26.02,ASCENDENTE,https://car1.car.gov.co/uploads/files/66b2580ec4e40.pdf
+2024-08-06,Tominé,689.5,366.657,53.18,5.00,322.87,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b2580ec4e40.pdf
+2024-08-07,El Hato,12.7,10.487,82.58,0.20,2.21,ESTABLE,https://car1.car.gov.co/uploads/files/66b3b3545cdba.pdf
+2024-08-07,Neusa,102.3,80.070,78.27,1.00,22.23,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b3b3545cdba.pdf
+2024-08-07,Sisga,90.1,64.205,71.24,1.00,25.92,ASCENDENTE,https://car1.car.gov.co/uploads/files/66b3b3545cdba.pdf
+2024-08-07,Tominé,689.5,366.091,53.09,5.00,323.44,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b3b3545cdba.pdf
+2024-08-08,El Hato,12.7,10.487,82.58,0.20,2.21,ESTABLE,https://car1.car.gov.co/uploads/files/66b506ba9e3a5.pdf
+2024-08-08,Neusa,102.3,79.982,78.18,1.00,22.32,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b506ba9e3a5.pdf
+2024-08-08,Sisga,90.1,64.205,71.24,1.00,25.92,ESTABLE,https://car1.car.gov.co/uploads/files/66b506ba9e3a5.pdf
+2024-08-08,Tominé,689.5,366.091,53.09,5.00,323.44,ESTABLE,https://car1.car.gov.co/uploads/files/66b506ba9e3a5.pdf
+2024-08-09,El Hato,12.7,10.479,82.51,0.20,2.22,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b657079ded1.pdf
+2024-08-09,Neusa,102.3,79.982,78.18,1.00,22.32,ESTABLE,https://car1.car.gov.co/uploads/files/66b657079ded1.pdf
+2024-08-09,Sisga,90.1,64.205,71.24,1.00,25.92,ESTABLE,https://car1.car.gov.co/uploads/files/66b657079ded1.pdf
+2024-08-09,Tominé,689.5,366.091,53.09,6.00,323.44,ESTABLE,https://car1.car.gov.co/uploads/files/66b657079ded1.pdf
+2024-08-10,El Hato,12.7,10.470,82.44,0.20,2.23,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b7a813aa75b.pdf
+2024-08-10,Neusa,102.3,79.894,78.10,1.00,22.41,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b7a813aa75b.pdf
+2024-08-10,Sisga,90.1,64.259,71.30,1.00,25.86,ASCENDENTE,https://car1.car.gov.co/uploads/files/66b7a813aa75b.pdf
+2024-08-10,Tominé,689.5,365.809,53.05,6.00,323.72,DESCENDENTE,https://car1.car.gov.co/uploads/files/66b7a813aa75b.pdf
+2024-08-11,El Hato,12.7,10.470,82.44,0.20,2.23,ESTABLE,https://car1.car.gov.co/uploads/files/66b8faa550436.pdf
+2024-08-11,Neusa,102.3,79.894,78.10,1.00,22.41,ESTABLE,https://car1.car.gov.co/uploads/files/66b8faa550436.pdf
+2024-08-11,Sisga,90.1,64.366,71.42,1.00,25.75,ASCENDENTE,https://car1.car.gov.co/uploads/files/66b8faa550436.pdf
+2024-08-11,Tominé,689.5,365.809,53.05,6.00,323.72,ESTABLE,https://car1.car.gov.co/uploads/files/66b8faa550436.pdf
+2024-08-12,El Hato,12.7,10.461,82.37,0.20,2.24,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ba412a4d05c.pdf
+2024-08-12,Neusa,102.3,79.807,78.01,1.00,22.49,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ba412a4d05c.pdf
+2024-08-12,Sisga,90.1,64.420,71.48,1.00,25.70,ASCENDENTE,https://car1.car.gov.co/uploads/files/66ba412a4d05c.pdf
+2024-08-12,Tominé,689.5,365.526,53.01,6.00,324.00,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ba412a4d05c.pdf
+2024-08-13,El Hato,12.7,10.461,82.37,0.20,2.24,ESTABLE,https://car1.car.gov.co/uploads/files/66bb9db92c540.pdf
+2024-08-13,Neusa,102.3,79.719,77.93,1.00,22.58,DESCENDENTE,https://car1.car.gov.co/uploads/files/66bb9db92c540.pdf
+2024-08-13,Sisga,90.1,64.527,71.60,1.00,25.59,ASCENDENTE,https://car1.car.gov.co/uploads/files/66bb9db92c540.pdf
+2024-08-13,Tominé,689.5,365.244,52.97,6.00,324.28,DESCENDENTE,https://car1.car.gov.co/uploads/files/66bb9db92c540.pdf
+2024-08-14,El Hato,12.7,10.452,82.30,0.20,2.25,DESCENDENTE,https://car1.car.gov.co/uploads/files/66bcedac8cd5f.pdf
+2024-08-14,Neusa,102.3,79.719,77.93,1.00,22.58,ESTABLE,https://car1.car.gov.co/uploads/files/66bcedac8cd5f.pdf
+2024-08-14,Sisga,90.1,64.581,71.66,1.00,25.54,ASCENDENTE,https://car1.car.gov.co/uploads/files/66bcedac8cd5f.pdf
+2024-08-14,Tominé,689.5,364.962,52.93,6.00,324.57,DESCENDENTE,https://car1.car.gov.co/uploads/files/66bcedac8cd5f.pdf
+2024-08-15,El Hato,12.7,10.452,82.30,0.20,2.25,ESTABLE,https://car1.car.gov.co/uploads/files/66be39b075a65.pdf
+2024-08-15,Neusa,102.3,79.631,77.84,1.00,22.67,DESCENDENTE,https://car1.car.gov.co/uploads/files/66be39b075a65.pdf
+2024-08-15,Sisga,90.1,64.581,71.66,1.00,25.54,ESTABLE,https://car1.car.gov.co/uploads/files/66be39b075a65.pdf
+2024-08-15,Tominé,689.5,364.680,52.89,6.00,324.85,DESCENDENTE,https://car1.car.gov.co/uploads/files/66be39b075a65.pdf
+2024-08-16,El Hato,12.7,10.452,82.30,0.20,2.25,ESTABLE,https://car1.car.gov.co/uploads/files/66bf8b44ce63c.pdf
+2024-08-16,Neusa,102.3,79.544,77.76,1.00,22.76,DESCENDENTE,https://car1.car.gov.co/uploads/files/66bf8b44ce63c.pdf
+2024-08-16,Sisga,90.1,64.635,71.72,1.00,25.48,ASCENDENTE,https://car1.car.gov.co/uploads/files/66bf8b44ce63c.pdf
+2024-08-16,Tominé,689.5,364.398,52.85,6.00,325.13,DESCENDENTE,https://car1.car.gov.co/uploads/files/66bf8b44ce63c.pdf
+2024-08-17,El Hato,12.7,10.443,82.23,0.20,2.26,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c0dafc0bbe7.pdf
+2024-08-17,Neusa,102.3,79.456,77.67,1.00,22.84,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c0dafc0bbe7.pdf
+2024-08-17,Sisga,90.1,64.635,71.72,1.00,25.48,ESTABLE,https://car1.car.gov.co/uploads/files/66c0dafc0bbe7.pdf
+2024-08-17,Tominé,689.5,364.116,52.81,6.00,325.41,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c0dafc0bbe7.pdf
+2024-08-18,El Hato,12.7,10.434,82.16,0.20,2.27,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c22cdec7798.pdf
+2024-08-18,Neusa,102.3,79.456,77.67,1.00,22.84,ESTABLE,https://car1.car.gov.co/uploads/files/66c22cdec7798.pdf
+2024-08-18,Sisga,90.1,64.743,71.84,1.00,25.38,ASCENDENTE,https://car1.car.gov.co/uploads/files/66c22cdec7798.pdf
+2024-08-18,Tominé,689.5,364.116,52.81,6.00,325.41,ESTABLE,https://car1.car.gov.co/uploads/files/66c22cdec7798.pdf
+2024-08-19,El Hato,12.7,10.425,82.09,0.20,2.27,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c388789d3c2.pdf
+2024-08-19,Neusa,102.3,79.369,77.58,1.00,22.93,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c388789d3c2.pdf
+2024-08-19,Sisga,90.1,64.743,71.84,1.00,25.38,ESTABLE,https://car1.car.gov.co/uploads/files/66c388789d3c2.pdf
+2024-08-19,Tominé,689.5,363.552,52.72,6.00,325.98,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c388789d3c2.pdf
+2024-08-20,El Hato,12.7,10.407,81.95,0.20,2.29,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c4d8b89c0d5.pdf
+2024-08-20,Neusa,102.3,79.281,77.50,1.00,23.02,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c4d8b89c0d5.pdf
+2024-08-20,Sisga,90.1,64.743,71.84,1.00,25.38,ESTABLE,https://car1.car.gov.co/uploads/files/66c4d8b89c0d5.pdf
+2024-08-20,Tominé,689.5,363.270,52.68,6.00,326.26,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c4d8b89c0d5.pdf
+2024-08-21,El Hato,12.7,10.407,81.95,0.20,2.29,ESTABLE,https://car1.car.gov.co/uploads/files/66c61f43cd75b.pdf
+2024-08-21,Neusa,102.3,79.194,77.41,1.00,23.11,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c61f43cd75b.pdf
+2024-08-21,Sisga,90.1,64.743,71.84,1.00,25.38,ESTABLE,https://car1.car.gov.co/uploads/files/66c61f43cd75b.pdf
+2024-08-21,Tominé,689.5,362.989,52.64,6.00,326.54,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c61f43cd75b.pdf
+2024-08-22,El Hato,12.7,10.398,81.88,0.20,2.30,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c770cb60015.pdf
+2024-08-22,Neusa,102.3,79.194,77.41,1.00,23.11,ESTABLE,https://car1.car.gov.co/uploads/files/66c770cb60015.pdf
+2024-08-22,Sisga,90.1,64.689,71.78,1.00,25.43,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c770cb60015.pdf
+2024-08-22,Tominé,689.5,362.426,52.56,6.00,327.10,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c770cb60015.pdf
+2024-08-23,El Hato,12.7,10.398,81.88,0.20,2.30,ESTABLE,https://car1.car.gov.co/uploads/files/66c8c19c77619.pdf
+2024-08-23,Neusa,102.3,79.107,77.33,1.00,23.19,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c8c19c77619.pdf
+2024-08-23,Sisga,90.1,64.635,71.72,1.00,25.48,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c8c19c77619.pdf
+2024-08-23,Tominé,689.5,361.864,52.48,6.00,327.66,DESCENDENTE,https://car1.car.gov.co/uploads/files/66c8c19c77619.pdf
+2024-08-24,El Hato,12.7,10.390,81.81,0.20,2.31,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ca1599ae37d.pdf
+2024-08-24,Neusa,102.3,79.019,77.24,1.00,23.28,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ca1599ae37d.pdf
+2024-08-24,Sisga,90.1,64.635,71.72,1.00,25.48,ESTABLE,https://car1.car.gov.co/uploads/files/66ca1599ae37d.pdf
+2024-08-24,Tominé,689.5,361.302,52.40,6.00,328.23,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ca1599ae37d.pdf
+2024-08-25,El Hato,12.7,10.390,81.81,0.20,2.31,ESTABLE,https://car1.car.gov.co/uploads/files/66cb6dfe2ce46.pdf
+2024-08-25,Neusa,102.3,78.932,77.16,1.00,23.37,DESCENDENTE,https://car1.car.gov.co/uploads/files/66cb6dfe2ce46.pdf
+2024-08-25,Sisga,90.1,64.635,71.72,1.00,25.48,ESTABLE,https://car1.car.gov.co/uploads/files/66cb6dfe2ce46.pdf
+2024-08-25,Tominé,689.5,360.740,52.32,6.00,328.79,DESCENDENTE,https://car1.car.gov.co/uploads/files/66cb6dfe2ce46.pdf
+2024-08-26,El Hato,12.7,10.372,81.67,0.20,2.33,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ccd04e59eb2.pdf
+2024-08-26,Neusa,102.3,78.932,77.16,1.00,23.37,ESTABLE,https://car1.car.gov.co/uploads/files/66ccd04e59eb2.pdf
+2024-08-26,Sisga,90.1,64.635,71.72,1.00,25.48,ESTABLE,https://car1.car.gov.co/uploads/files/66ccd04e59eb2.pdf
+2024-08-26,Tominé,689.5,360.179,52.24,6.00,329.35,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ccd04e59eb2.pdf
+2024-08-27,El Hato,12.7,10.363,81.60,0.20,2.34,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ce2699ab1f7.pdf
+2024-08-27,Neusa,102.3,78.845,77.07,1.00,23.46,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ce2699ab1f7.pdf
+2024-08-27,Sisga,90.1,64.581,71.66,1.00,25.54,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ce2699ab1f7.pdf
+2024-08-27,Tominé,689.5,359.898,52.19,6.00,329.63,DESCENDENTE,https://car1.car.gov.co/uploads/files/66ce2699ab1f7.pdf
+2024-08-28,El Hato,12.7,10.354,81.53,0.20,2.35,DESCENDENTE,https://car1.car.gov.co/uploads/files/66cf5730cea57.pdf
+2024-08-28,Neusa,102.3,78.758,76.99,1.00,23.54,DESCENDENTE,https://car1.car.gov.co/uploads/files/66cf5730cea57.pdf
+2024-08-28,Sisga,90.1,64.527,71.60,1.00,25.59,DESCENDENTE,https://car1.car.gov.co/uploads/files/66cf5730cea57.pdf
+2024-08-28,Tominé,689.5,359.338,52.11,6.00,330.19,DESCENDENTE,https://car1.car.gov.co/uploads/files/66cf5730cea57.pdf
+2024-08-29,El Hato,12.7,10.354,81.53,0.20,2.35,ESTABLE,https://car1.car.gov.co/uploads/files/66d0b01224a93.pdf
+2024-08-29,Neusa,102.3,78.671,76.90,1.00,23.63,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d0b01224a93.pdf
+2024-08-29,Sisga,90.1,64.474,71.54,1.00,25.65,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d0b01224a93.pdf
+2024-08-29,Tominé,689.5,359.058,52.07,6.00,330.47,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d0b01224a93.pdf
+2024-08-30,El Hato,12.7,10.345,81.46,0.20,2.35,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d1fbfd1b56a.pdf
+2024-08-30,Neusa,102.3,78.584,76.82,1.00,23.72,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d1fbfd1b56a.pdf
+2024-08-30,Sisga,90.1,64.420,71.48,2.00,25.70,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d1fbfd1b56a.pdf
+2024-08-30,Tominé,689.5,358.778,52.03,6.00,330.75,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d1fbfd1b56a.pdf
+2024-08-31,El Hato,12.7,10.327,81.32,0.20,2.37,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d363cb8fb11.pdf
+2024-08-31,Neusa,102.3,78.497,76.73,1.00,23.80,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d363cb8fb11.pdf
+2024-08-31,Sisga,90.1,64.312,71.36,2.00,25.81,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d363cb8fb11.pdf
+2024-08-31,Tominé,689.5,358.498,51.99,6.00,331.03,DESCENDENTE,https://car1.car.gov.co/uploads/files/66d363cb8fb11.pdf

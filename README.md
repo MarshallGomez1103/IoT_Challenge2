@@ -26,7 +26,7 @@ El ensamblaje físico se realizó como esfuerzo conjunto. Los roles resumen la d
 - **Tablero web:** alojado en el ESP32 y accesible desde un celular conectado a la misma red Wi-Fi. Muestra las lecturas, el estado del sistema y el historial reciente guardado en RAM.
 - **Fusión y alertas:** el firmware combina un indicador de riesgo por nivel con un componente ambiental. El resultado es una lógica experimental que debe calibrarse y validarse con datos del montaje.
 
-La captura del eco del HC-SR04 se realiza mediante una interrupción breve; el cálculo, las lecturas ambientales, la atención del servidor, la pantalla y las alarmas se atienden en el superloop de la aplicación, sin tareas adicionales creadas por el equipo.
+La captura del eco del HC-SR04 se realiza mediante una interrupción breve. Una tarea independiente muestrea el LDR periódicamente y entrega las lecturas al ciclo principal mediante una cola; las demás lecturas ambientales, el servidor, la pantalla y las alarmas se atienden en el ciclo principal. La lectura del LDR queda pendiente de validación con el sensor físico.
 
 ## Archivos de este repositorio
 

@@ -1,0 +1,271 @@
+[
+  {
+    "archivo": "datos/originales/nasa_power_neusa_2023_2025.json",
+    "entidad": "NASA POWER",
+    "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CPS%2CALLSKY_SFC_SW_DWN%2CPRECTOTCORR%2CWS2M&community=AG&longitude=-73.96666667&latitude=5.133333333&start=20230101&end=20251231&format=JSON&time-standard=LST",
+    "sha256": "e397edc2c804d359e156b19d4063dea5228b551b61f5d5643095131c816a5b8e",
+    "bytes": 146799
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-01.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66abce5249a07.pdf",
+    "sha256": "67f7e5d8f9cf872e686be1ce4c6ab90018f09c449dbbdc8686b43ddb2394338f",
+    "bytes": 2237914,
+    "fecha": "2024-08-01"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-02.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66ad147187195.pdf",
+    "sha256": "bdb21534fa944239b19c921beff9af1ccbf65c6c0f2984ba609e57f048cbc6b2",
+    "bytes": 2158691,
+    "fecha": "2024-08-02"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-03.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66aea2bfae41d.pdf",
+    "sha256": "21d01cf807ab3485da3f18d5a8f1bbf26a32f5d2ec82ad03354c75aa516e821d",
+    "bytes": 2286583,
+    "fecha": "2024-08-03"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-04.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66afca1e14a0e.pdf",
+    "sha256": "8f8a09579b83b6ed4f8a24364492f69eb0ea697983c9e92061b3a032287d2f48",
+    "bytes": 1428684,
+    "fecha": "2024-08-04"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-05.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b10f6f028b1.pdf",
+    "sha256": "5c6041db80efdb145bb6b17e86eadfa96a349e6fdc324ddb71591cb2344a6500",
+    "bytes": 2287593,
+    "fecha": "2024-08-05"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-06.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b2580ec4e40.pdf",
+    "sha256": "676436601bc43a497e58a36f1cb46421ba120a788cd7b42948ab71cac01da4cd",
+    "bytes": 2287784,
+    "fecha": "2024-08-06"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-07.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b3b3545cdba.pdf",
+    "sha256": "a847ab550ca5086359f97e1c836b0b5030edd6af419afaf7062296dc101cc1b4",
+    "bytes": 1490225,
+    "fecha": "2024-08-07"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-08.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b506ba9e3a5.pdf",
+    "sha256": "0066e557e4536a7adc5ed9379536a5a193f42f295a351fe1cbcae22ff8375cbc",
+    "bytes": 2234359,
+    "fecha": "2024-08-08"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-09.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b657079ded1.pdf",
+    "sha256": "f58f0dda04b705ed10dacca7fb76c06010dba51310fcf06a91eebd4b71c3cc13",
+    "bytes": 2234042,
+    "fecha": "2024-08-09"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-10.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b7a813aa75b.pdf",
+    "sha256": "3504ea0f6f870089aaeb580efc308764eded5e8b8431d690f2d67ec26546d6e9",
+    "bytes": 2237239,
+    "fecha": "2024-08-10"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-11.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66b8faa550436.pdf",
+    "sha256": "cb5ba30f2f10680f3caa6932bccec3c3299b52887376e7fdc74dcbb926f43d3c",
+    "bytes": 1499095,
+    "fecha": "2024-08-11"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-12.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66ba412a4d05c.pdf",
+    "sha256": "1e4161fd98c8c05a43abc5528d6b56bcb5014171b87e33fdaf85f8afdb5793b8",
+    "bytes": 2287848,
+    "fecha": "2024-08-12"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-13.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66bb9db92c540.pdf",
+    "sha256": "ddc17c7c425ec3fc850dc41e6a6e9322231e3d38803ed5f2201bb5497ce0e322",
+    "bytes": 2236739,
+    "fecha": "2024-08-13"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-14.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66bcedac8cd5f.pdf",
+    "sha256": "7a44d7931bc95f6d4ba6bc77c4dd8ee1cbde811588d2fe6bfc6eeaafee0355d0",
+    "bytes": 2237779,
+    "fecha": "2024-08-14"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-15.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66be39b075a65.pdf",
+    "sha256": "88519e4d06a583209d8698728b31a4ac1c67c9753c8ec038dc20f79773d945b7",
+    "bytes": 2229247,
+    "fecha": "2024-08-15"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-16.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66bf8b44ce63c.pdf",
+    "sha256": "bcfd4af187624f4ba1ee10b11d097e1dc53fbc07c4816c841ab73a82ed50f740",
+    "bytes": 2258193,
+    "fecha": "2024-08-16"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-17.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c0dafc0bbe7.pdf",
+    "sha256": "b338b36482c168c4495cf835ef53028a54e9340ae2bb7ca1ff6a9731fc62c37e",
+    "bytes": 2280320,
+    "fecha": "2024-08-17"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-18.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c22cdec7798.pdf",
+    "sha256": "e67374e8746a5cf7e2c7c8a36b68c77e48b824436d025ddcb015182a2d4972cc",
+    "bytes": 1926059,
+    "fecha": "2024-08-18"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-19.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c388789d3c2.pdf",
+    "sha256": "dbd99a9c8ee0d9fb15d235a98813312b02af7f719c518c5641131d199f5f5640",
+    "bytes": 1488864,
+    "fecha": "2024-08-19"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-20.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c4d8b89c0d5.pdf",
+    "sha256": "222d749254d66d8e51f1cbe083db7029e8da67884a54ffdf8e1427720f2178e3",
+    "bytes": 2236843,
+    "fecha": "2024-08-20"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-21.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c61f43cd75b.pdf",
+    "sha256": "20bb21a05bc7f43e47a21a4a2ba4de86723382d857881301555ffc1d02b76a9e",
+    "bytes": 2233402,
+    "fecha": "2024-08-21"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-22.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c770cb60015.pdf",
+    "sha256": "d1c173b97d0cf004cb89d1abcf24c2af417ce3a5962797527ef859ba8c8aa4ef",
+    "bytes": 2234614,
+    "fecha": "2024-08-22"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-23.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66c8c19c77619.pdf",
+    "sha256": "62cf21cd515d79eae769104be0d221804c6d0058512503f37236ccb6838bb6a8",
+    "bytes": 2039132,
+    "fecha": "2024-08-23"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-24.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66ca1599ae37d.pdf",
+    "sha256": "c77828b74849d48558599829dd534a7facc85d3994f384a22fd4b7e6c2663597",
+    "bytes": 2279617,
+    "fecha": "2024-08-24"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-25.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66cb6dfe2ce46.pdf",
+    "sha256": "94b400c2ed23b12fcb2c345706ca892fe9deff6bfcdbb962dee5b3199b6ea8a4",
+    "bytes": 1490014,
+    "fecha": "2024-08-25"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-26.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66ccd04e59eb2.pdf",
+    "sha256": "a3dfe5cc3dacbbbe16afeed349e35151834701973d4b839579e6e0c7901b3bba",
+    "bytes": 2224533,
+    "fecha": "2024-08-26"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-27.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66ce2699ab1f7.pdf",
+    "sha256": "36ee1999e5f57f3cfd01f307aa897a14b2f3e80da33c6ba64b430baf5121c230",
+    "bytes": 2236231,
+    "fecha": "2024-08-27"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-28.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66cf5730cea57.pdf",
+    "sha256": "4344c3f1b920e6ed88000c57500582eb1a8d3e9895ddcaab22d99746e110ca43",
+    "bytes": 2265927,
+    "fecha": "2024-08-28"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-29.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66d0b01224a93.pdf",
+    "sha256": "c7e0a221cc6cd38464a916d7ab8b7412ba0bff091fdfa8ead19e4b22aee0d278",
+    "bytes": 2199760,
+    "fecha": "2024-08-29"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-30.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66d1fbfd1b56a.pdf",
+    "sha256": "f296782ce5d6f42bfbf9a85c12a2268ef67612edb415472d7c4a50e5486d7fb1",
+    "bytes": 2285193,
+    "fecha": "2024-08-30"
+  },
+  {
+    "archivo": "datos/originales/car_pdf/2024-08-31.pdf",
+    "entidad": "CAR",
+    "url": "https://car1.car.gov.co/uploads/files/66d363cb8fb11.pdf",
+    "sha256": "75433cec6659a81ab1556207a5dc8a35fc1989be5b4c468b16458e89278b8e75",
+    "bytes": 2235195,
+    "fecha": "2024-08-31"
+  },
+  {
+    "archivo": "datos/car_embalses_agosto_2024.csv",
+    "entidad": "Tabla derivada",
+    "url": null,
+    "sha256": "236e103eb09a05d062ab312041b6a693e533943aa07b337bf3e9d6d90f88340d",
+    "bytes": 14451
+  },
+  {
+    "archivo": "datos/nasa_power_neusa_diario_2023_2025.csv",
+    "entidad": "Tabla derivada",
+    "url": null,
+    "sha256": "8896b28361d4da051f768200a290c514dbc5e90f415c94b7119be2e96b688e1f",
+    "bytes": 113090
+  }
+]

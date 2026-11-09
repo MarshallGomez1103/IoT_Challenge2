@@ -12,10 +12,9 @@
 
 /*
   WMS - segundo corte
-  Superloop Arduino (sin tareas/hilos creados por la aplicación).
-  El HC-SR04 se mide capturando los flancos ECHO con una ISR GPIO.
-  BMP180, DHT11 y LDR se leen fuera de la ISR porque sus interfaces requieren
-  transacciones I2C o rutinas temporizadas.
+  El HC-SR04 captura los flancos ECHO con una ISR GPIO.
+  Una tarea independiente toma las muestras del LDR; el superloop recibe
+  la muestra por una cola y atiende BMP180, DHT11, red y actuadores.
 */
 
 // Pines del sketch del primer corte: confirmar contra el cableado rearmado.
@@ -66,6 +65,7 @@ const uint8_t MIN_MUESTRAS_COHERENTES = 3;
 const float TOLERANCIA_MUESTRAS_CM = 2.0f;
 const float SALTO_A_CONFIRMAR_CM = 4.0f;
 const uint32_t INTERVALO_AMBIENTE_MS = 1000;
+const uint32_t VIGENCIA_LUZ_MS = 3000;
 const uint32_t INTERVALO_DHT_MS = 2000;
 const uint32_t INTERVALO_REINTENTO_BMP_MS = 3000;
 const uint32_t INTERVALO_HISTORIAL_MS = 2000;
@@ -78,6 +78,12 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 Adafruit_BMP085 bmp;
 DHT dht(PIN_DHT, DHT_TYPE);
 WebServer server(80);
+
+struct MuestraLuz {
+  int adc;
+  uint32_t tiempoMs;
+};
+QueueHandle_t colaLuz = nullptr;
 
 enum EstadoAlerta : uint8_t {
   ESTADO_FALLA = 0,
@@ -243,6 +249,16 @@ void IRAM_ATTR capturarEcoISR() {
   }
 }
 
+void tareaLuz(void *) {
+  for (;;) {
+    long suma = 0;
+    for (uint8_t i = 0; i < 8; ++i) suma += analogRead(PIN_LDR);
+    MuestraLuz muestra = {static_cast<int>(suma / 8), millis()};
+    xQueueOverwrite(colaLuz, &muestra);
+    vTaskDelay(pdMS_TO_TICKS(INTERVALO_AMBIENTE_MS));
+  }
+}
+
 float limitar(float x, float minimo, float maximo) {
   if (x < minimo) return minimo;
   if (x > maximo) return maximo;
@@ -259,6 +275,35 @@ float convertirLuzPct(int adc) {
   float pct = 100.0f * (adc - ADC_LUZ_OSCURO) /
               (float)(ADC_LUZ_CLARA - ADC_LUZ_OSCURO);
   return limitar(pct, 0.0f, 100.0f);
+}
+
+void procesarLuz() {
+  static uint32_t ultimaMuestraMs = 0;
+  static bool muestraRecibida = false;
+  MuestraLuz muestra;
+  if (colaLuz && xQueueReceive(colaLuz, &muestra, 0) == pdTRUE) {
+    adcLuz = muestra.adc;
+    ultimaMuestraMs = muestra.tiempoMs;
+    muestraRecibida = true;
+    // Los extremos indican saturación, no presencia física del sensor.
+    ldrEnRangoCalibrado = adcLuz > ADC_LUZ_CLARA && adcLuz < ADC_LUZ_OSCURO;
+    float luzNueva = ldrEnRangoCalibrado ? convertirLuzPct(adcLuz) : NAN;
+    if (!ldrEnRangoCalibrado) {
+      luzPct = NAN;
+      luzInicializada = false;
+    } else if (!luzInicializada) {
+      luzPct = luzNueva;
+      luzInicializada = true;
+    } else if (isfinite(luzNueva)) {
+      luzPct += 0.20f * (luzNueva - luzPct);
+    }
+  }
+  uint32_t ahoraMs = millis();
+  if (!muestraRecibida || ahoraMs - ultimaMuestraMs > VIGENCIA_LUZ_MS) {
+    ldrEnRangoCalibrado = false;
+    luzPct = NAN;
+    luzInicializada = false;
+  }
 }
 
 float calcularIndiceAmbiental() {
@@ -552,22 +597,6 @@ void leerSensoresAmbientales(uint32_t ahoraMs) {
     presionHpa = NAN;
   }
 
-  long suma = 0;
-  for (uint8_t i = 0; i < 8; ++i) suma += analogRead(PIN_LDR);
-  adcLuz = suma / 8;
-  // Los extremos de calibración son saturación, no una lectura confiable de presencia.
-  ldrEnRangoCalibrado = adcLuz > ADC_LUZ_CLARA && adcLuz < ADC_LUZ_OSCURO;
-  float luzNueva = ldrEnRangoCalibrado ? convertirLuzPct(adcLuz) : NAN;
-  if (!ldrEnRangoCalibrado) {
-    luzPct = NAN;
-    luzInicializada = false;
-  } else if (!luzInicializada) {
-    luzPct = luzNueva;
-    luzInicializada = true;
-  } else if (isfinite(luzNueva)) {
-    luzPct += 0.20f * (luzNueva - luzPct);
-  }
-
   if (ahoraMs - ultimaLecturaDhtMs >= INTERVALO_DHT_MS) {
     // La biblioteca DHT es temporizada y puede bloquear brevemente el loop.
     // No se inicia una medición ultrasónica mientras este bloque se ejecuta.
@@ -678,6 +707,7 @@ void iniciarWifi() {
   Serial.println(ok ? "AP demo iniciado" : "No se pudo iniciar AP demo");
 #else
   WiFi.mode(WIFI_STA);
+  WiFi.setHostname("WMS-ESP");
   WiFi.begin(WMS_WIFI_SSID, WMS_WIFI_PASSWORD);
   ultimoIntentoWifiMs = millis();
   Serial.println("Conectando a la WLAN autorizada…");
@@ -813,6 +843,14 @@ void setup() {
   if (!bmpDisponible) Serial.println("BMP180 no detectado; se reintentara en el superloop.");
 
   attachInterrupt(digitalPinToInterrupt(PIN_ECHO), capturarEcoISR, CHANGE);
+  colaLuz = xQueueCreate(1, sizeof(MuestraLuz));
+  if (!colaLuz) {
+    Serial.println("No se pudo crear la cola del LDR.");
+  } else if (xTaskCreate(tareaLuz, "lecturaLDR", 2048, nullptr, 1, nullptr) != pdPASS) {
+    vQueueDelete(colaLuz);
+    colaLuz = nullptr;
+    Serial.println("No se pudo crear la tarea del LDR.");
+  }
   iniciarWifi();
   ultimaLecturaDhtMs = millis() - INTERVALO_DHT_MS;
   ultimaLecturaAmbienteMs = millis() - INTERVALO_AMBIENTE_MS;
@@ -823,12 +861,13 @@ void setup() {
 void loop() {
   uint32_t ahoraMs = millis();
 
-  // Superloop: atiende red, sensores, fusión, actuadores y pantalla sin hilos.
+  // El superloop atiende red, sensores, fusión, actuadores y pantalla.
   atenderWifiYServidor(ahoraMs);
   procesarEcho(ahoraMs);
   reportarEcoSerie(ahoraMs);
   if (!esperandoEco && ahoraMs - ultimoDisparoEcoMs >= INTERVALO_ECHO_MS)
     iniciarMedicionEcho(ahoraMs);
+  procesarLuz();
   leerSensoresAmbientales(ahoraMs);
   actualizarFusion();
   actualizarActuadores(ahoraMs);

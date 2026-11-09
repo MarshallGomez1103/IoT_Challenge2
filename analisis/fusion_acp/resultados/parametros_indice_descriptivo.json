@@ -1,0 +1,74 @@
+{
+  "tipo": "ACP descriptivo conjunto con distancia simulada",
+  "embalse": "Neusa",
+  "inicio": "2024-08-01",
+  "fin": "2024-08-31",
+  "observaciones": 31,
+  "simulacion": {
+    "formula": "5 + 15*(V_max-V)/(V_max-V_min)",
+    "V_min_Mm3": 78.497,
+    "V_max_Mm3": 80.421,
+    "distancia_min_cm": 5.0,
+    "distancia_max_cm": 20.0,
+    "extremos": "minimo y maximo observados del mes; no lleno y seco fisicos"
+  },
+  "variables_en_orden": [
+    "distancia_simulada_cm",
+    "radiacion_MJ_m2_dia",
+    "temperatura_media_C",
+    "humedad_relativa_pct",
+    "presion_hPa"
+  ],
+  "medias": {
+    "distancia_simulada_cm": 11.964321641741016,
+    "radiacion_MJ_m2_dia": 17.083548387096776,
+    "temperatura_media_C": 13.589354838709676,
+    "humedad_relativa_pct": 85.3051612903226,
+    "presion_hPa": 760.048387096774
+  },
+  "desviaciones_ddof0": {
+    "distancia_simulada_cm": 4.431689152010454,
+    "radiacion_MJ_m2_dia": 2.9324783621423163,
+    "temperatura_media_C": 0.6376313804348845,
+    "humedad_relativa_pct": 2.4725158546316317,
+    "presion_hPa": 0.6132257216066329
+  },
+  "centrado_adicional_pca": {
+    "distancia_simulada_cm": -5.08553772570233e-16,
+    "radiacion_MJ_m2_dia": -7.305983774952643e-16,
+    "temperatura_media_C": 2.0351104314298234e-15,
+    "humedad_relativa_pct": -8.165511277888248e-15,
+    "presion_hPa": 2.4522319658752815e-13
+  },
+  "coeficientes_PC1": {
+    "distancia_simulada_cm": 0.37093820286425,
+    "radiacion_MJ_m2_dia": 0.19677520283539096,
+    "temperatura_media_C": -0.5326255278324967,
+    "humedad_relativa_pct": -0.5187478472424067,
+    "presion_hPa": 0.5204758277648005
+  },
+  "varianza_PC1_pct": 45.27391919401025,
+  "normalizacion_L1": 2.139562608539345,
+  "participacion_nivel_L1": 0.1733710438683939,
+  "participacion_ambiente_L1": 0.8266289561316061,
+  "coeficientes_bloque_A": {
+    "radiacion_MJ_m2_dia": 0.11125889827370139,
+    "temperatura_media_C": -0.30115242451898105,
+    "humedad_relativa_pct": -0.2933058288565217,
+    "presion_hPa": 0.29428284835079593
+  },
+  "S_min_referencia": -1.1730224825252569,
+  "S_max_referencia": 1.5285500342743112,
+  "formula_indice": "100*(S-S_min_referencia)/(S_max_referencia-S_min_referencia)",
+  "umbral_alarma_validado": null,
+  "ponderaciones_de_riesgo_validadas": false,
+  "distancia_medida_por_sensor": false,
+  "versiones": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "jupyterlab": "4.6.4",
+    "ipykernel": "7.4.0"
+  }
+}
