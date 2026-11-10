@@ -3,6 +3,7 @@
 #include <Adafruit_BMP085.h>
 #include <DHT.h>
 #include <WiFi.h>
+#include "mqtt_wms.h"
 #include <WebServer.h>
 #include <math.h>
 #include <string.h>
@@ -852,6 +853,14 @@ void setup() {
     Serial.println("No se pudo crear la tarea del LDR.");
   }
   iniciarWifi();
+
+  // Esto es lo de la cola
+  colaNivelMqtt = xQueueCreate(1, sizeof(LecturaMqtt));  // Crea la cola antes de iniciar MQTT.
+  if (colaNivelMqtt == nullptr ||  // Si la cola falla, evita iniciar la tarea.
+      xTaskCreate(tareaMqtt, "mqttWms", 4096, nullptr, 1, nullptr) != pdPASS) {  // Inicia la tarea MQTT.
+    Serial.println("No se pudo iniciar la tarea MQTT");  // Avisa si falló el arranque.
+  }
+
   ultimaLecturaDhtMs = millis() - INTERVALO_DHT_MS;
   ultimaLecturaAmbienteMs = millis() - INTERVALO_AMBIENTE_MS;
   ultimaMuestraHistorialMs = millis();
@@ -877,5 +886,11 @@ void loop() {
   if (ahoraMs - ultimaMuestraHistorialMs >= INTERVALO_HISTORIAL_MS) {
     ultimaMuestraHistorialMs = ahoraMs;
     guardarMuestra(ahoraMs);
+    const float distanciaAlCeroCm = 70.0f;  // Distancia al nivel cero; validar en el montaje.
+    if (colaNivelMqtt && distanciaValida &&  // Usa solo una medición válida del sensor.
+        distanciaCm >= 0.0f && distanciaCm <= distanciaAlCeroCm) {  // Descarta ecos fuera del rango del tanque.
+        LecturaMqtt lectura{distanciaAlCeroCm - distanciaCm, temperaturaC};
+        xQueueOverwrite(colaNivelMqtt, &lectura);
+    }
   }
 }

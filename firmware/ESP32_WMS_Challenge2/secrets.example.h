@@ -12,3 +12,8 @@
 
 #define WMS_AP_SSID "WMS-Demo"
 #define WMS_AP_PASSWORD "Cambiar123" // Mínimo 8 caracteres; cambiar antes de usar.
+
+// Broker MQTT local (Raspberry Pi).
+#define WMS_MQTT_HOST "IP_DE_LA_RASPBERRY"
+#define WMS_MQTT_USER "USUARIO_MQTT"
+#define WMS_MQTT_PASSWORD "CLAVE_MQTT"

@@ -38,7 +38,7 @@ La captura del eco del HC-SR04 se realiza mediante una interrupción breve. Una 
 
 1. Copia `secrets.example.h` como `secrets.h` en la carpeta del sketch y configura una red autorizada o el modo punto de acceso para pruebas.
 2. No publiques `secrets.h`; este repositorio solo debe contener el archivo de ejemplo.
-3. Abre el sketch en Arduino IDE, selecciona la placa ESP32 correspondiente e instala las bibliotecas LiquidCrystal_I2C, Adafruit BMP085 y DHT sensor library. Wi-Fi y WebServer forman parte del core ESP32.
+3. Abre el sketch en Arduino IDE, selecciona la placa ESP32 correspondiente e instala las bibliotecas LiquidCrystal_I2C, Adafruit BMP085, DHT sensor library y MQTT de 256dpi. Wi-Fi y WebServer forman parte del core ESP32.
 4. En modo punto de acceso, conecta el celular a la red configurada en `secrets.h` y abre `http://192.168.4.1/`. En modo estación, abre la dirección IP que el ESP32 recibe del router.
 
 ## Estado del prototipo
